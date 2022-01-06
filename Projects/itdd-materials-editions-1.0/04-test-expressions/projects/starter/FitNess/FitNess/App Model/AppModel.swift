@@ -45,5 +45,10 @@ class AppModel {
     appState = .inProgress
   }
   
-  
+  func restart() {
+    appState = .notStarted
+    
+    /// Challenge: Data model Reset code 를 AppModel 의 restart 로 이동시키기
+    self.dataModel.goal = nil
+  }
 }

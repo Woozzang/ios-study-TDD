@@ -39,4 +39,43 @@ class DataModelTests: XCTestCase {
   func testModel_whenStarted_goalIsNotReached() {
     XCTAssertFalse(sut.goalReached, "goalReached should be false when the model is created")
   }
+  
+  // MARK: - Nessie
+  
+  func testModel_whenStarted_userIsNotCaught() {
+    XCTAssertFalse(sut.caught)
+  }
+  
+  func testModel_whenUserAheadOfNessie_isNotCaught() {
+    // given
+    sut.distance = 1000
+    sut.nessie.distance = 100
+    
+    // then
+    XCTAssertFalse(sut.caught)
+  }
+  
+  func testModel_whenNessieAheadofUser_isCaught() {
+    //given
+    
+    sut.nessie.distance = 1000
+    sut.distance = 100
+    
+    //then
+    XCTAssertTrue(sut.caught)
+  }
+  
+  func testModel_whenUserCaught_cannnotBeReached() {
+    //given 목표를 설정한 상황에서
+    sut.goal = 1000
+    sut.steps = 1000
+    
+    // when 네씨에게 잡혔다면
+    sut.distance = 100
+    sut.nessie.distance = 100
+    
+    // then 더이상 목표를 달성할수 없다
+    XCTAssertFalse(sut.goalReached)
+  }
+  
 }

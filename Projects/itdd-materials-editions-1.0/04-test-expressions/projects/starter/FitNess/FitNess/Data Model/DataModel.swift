@@ -29,10 +29,11 @@
 import Foundation
 
 // Add the Data Model class here:
+/// 사용자와 관련된 상태를 저장하는 클래스
 class DataModel {
   
   var goalReached: Bool {
-    if let goal = goal, steps >= goal {
+    if let goal = goal, steps >= goal, !caught {
       return true
     }
     return false
@@ -41,6 +42,15 @@ class DataModel {
   var goal: Int?
   
   var steps: Int = 0
+  
+  // MARK: - Nessie
+  
+  let nessie = Nessie()
+  var distance: Double = 0
+  
+  var caught: Bool {
+    return distance > 0 && nessie.distance >= distance
+  }
   
   func start() throws {
     

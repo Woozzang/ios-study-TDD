@@ -77,7 +77,7 @@ class StepCountController: UIViewController {
   }
 
   // MARK: - UI Actions
-  
+
   @IBAction func startStopPause(_ sender: Any?) {
     
     do {
@@ -138,6 +138,6 @@ extension StepCountController {
 extension StepCountController {
 
   private func updateChaseView() {
-    // update this function
+    chaseView.state = AppModel.instance.appState
   }
 }
