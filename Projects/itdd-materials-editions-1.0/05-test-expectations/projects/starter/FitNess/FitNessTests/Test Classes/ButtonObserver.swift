@@ -1,4 +1,4 @@
-/// Copyright (c) 2021 Razeware LLC
+/// Copyright (c) 2022 Razeware LLC
 /// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -31,49 +31,29 @@
 /// THE SOFTWARE.
 
 import Foundation
+import XCTest
 
-class AppModel {
-  static let instance = AppModel()
-  let dataModel = DataModel()
-
-  private(set) var appState: AppState = .notStarted {
-    didSet {
-      stateChangedCallback?(self)
-    }
+class ButtonObserver: NSObject {
+  
+  var expectation: XCTestExpectation?
+  weak var button: UIButton?
+  
+  func observe(_ button: UIButton, expectation: XCTestExpectation) {
+    
+    self.button = button
+    self.expectation = expectation
+    
+    button.addObserver(self, forKeyPath: "titleLabel.text", options: [.new], context: nil)
   }
   
-  var stateChangedCallback: ((AppModel) -> ())?
-
-  func start() throws {
-    guard dataModel.goal != nil else {
-      throw AppError.goalNotSet
-    }
-
-    appState = .inProgress
+  
+  override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+    
+    expectation?.fulfill()
   }
-
-  func pause() {
-    appState = .paused
-  }
-
-  func restart() {
-    appState = .notStarted
-    dataModel.restart()
-  }
-
-  func setCaught() throws {
-    guard dataModel.caught else {
-      throw AppError.invalidState
-    }
-
-    appState = .caught
-  }
-
-  func setCompleted() throws {
-    guard dataModel.goalReached else {
-      throw AppError.invalidState
-    }
-
-    appState = .completed
+  
+  deinit {
+    
+    button?.removeObserver(self, forKeyPath: "titleLabel.text")
   }
 }

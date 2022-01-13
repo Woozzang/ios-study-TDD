@@ -47,4 +47,39 @@ class PedometerTests: XCTestCase {
     sut = nil
     try super.tearDownWithError()
   }
+  
+  func testCMPedometer_whenQueries_loadsHistoricData() {
+    // given
+    var error: Error?
+    var data: CMPedometerData?
+    
+    /// 비동기 테스트를 위한 메서드 : 예상한다
+    let exp = expectation(description: "pedometer query returns")
+    
+    // when
+    let now = Date()
+    let then = now.addingTimeInterval(-1000)
+    sut.queryPedometerData(from: then, to: now) { pedometerData, pedometerError in
+      
+      error = pedometerError
+      data = pedometerData
+      
+      /// fulfill 을 호출함으로서 실제 예상이 실현되었는지 확인할 수 있다.
+      exp.fulfill()
+    }
+    
+    // then
+    /// 비동기 동작이 실행될때까지 제어를 잡고 있는다.
+    /// timeout 이 지나기 전까지 fulfill 이 호출되지 않으면 test fail 이다.
+    wait(for: [exp], timeout: 1)
+    
+    XCTAssertNil(error)
+    XCTAssertNotNil(data)
+    
+    if let steps = data?.numberOfSteps {
+      XCTAssertGreaterThan(steps.intValue, 0)
+    } else {
+      XCTFail("no step data")
+    }
+  }
 }
