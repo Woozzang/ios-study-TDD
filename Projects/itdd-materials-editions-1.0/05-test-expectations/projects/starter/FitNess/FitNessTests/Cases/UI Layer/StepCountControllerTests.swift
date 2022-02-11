@@ -178,6 +178,43 @@ class StepCountControllerTests: XCTestCase {
     // then
     XCTAssertEqual(AppModel.instance.appState, .notStarted)
   }
+  
+  /// 잡혔다면
+  /// 버튼 타이틀이 TryAgain  인지 테스트
+  func testController_whenCaught_buttonLabelIsTryAgain() {
+    // given
+    givenInProgress()
+    let exp = expectation(description: "button title change")
+    let observer = ButtonObserver()
+    
+    observer.observe(sut.startButton, expectation: exp)
+      
+    // when
+    whenCaught()
+    
+    // then
+    waitForExpectations(timeout: 1)
+    let text = sut.startButton.title(for: .normal)
+    XCTAssertEqual(text, AppState.caught.nextStateButtonLabel)
+  }
+  
+  /// 완료 되었다면
+  /// 버튼 타이틀이 Start Over 인지 테스트
+  
+  func testController_whenComplete_buttonLabelIsStartOver() {
+    // given
+    givenInProgress()
+    
+    let exp = expectation(description: "button title change")
+    let observer = ButtonObserver()
+    observer.observe(sut.startButton, expectation: exp)
+    
+    // when
+    whenCompleted()
+    
+    // then
+    waitForExpectations(timeout: 1)
+  }
 
   // MARK: - Chase View
   func testChaseView_whenLoaded_isNotStarted() {
